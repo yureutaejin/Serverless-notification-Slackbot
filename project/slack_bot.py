@@ -7,8 +7,8 @@ from scraper.scraping_web import CreateAttachment
 
 
 
-Token = 'xoxb-4032615425511-4579783735014-uZGev8165zpzJPKkxP5MOaMT'
-channel = "#univ_notification"
+Token = '토큰 할당'
+channel = "슬랙채널"
 text = "notification_message"
 
 def notice_message(token, channel, text, attachments):
