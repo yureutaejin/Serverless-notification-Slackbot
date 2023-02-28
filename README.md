@@ -49,3 +49,6 @@ gcp cloud Run job에 등록
 gcp cloud scheduler로 생성한 job 스케줄링
 slack_bot.py에서 token 값 및 채널 값 수정 필요. slack api에서 할당 받을 수 있음.  
 ~~리눅스 crontab에 slack_bot_cron.sh 등록 (조건은 자유, 다만 단시간 너무 많이 접근하면 차단 위험이 있음)~~
+<img src="./readme_image/cloudrun_example.png">  
+<img src="./readme_image/cloudscheduler_example.png">  
+<img src="./readme_image/result_log.png">
