@@ -4,12 +4,15 @@ import json
 import pickle
 import os
 from scraper.scraping_web import CreateAttachment
+from google.cloud import storage
 
 
-
-Token = '토큰 할당'
-channel = "슬랙채널"
+Token = 'slack api token'
+channel = "#univ_notification"
 text = "notification_message"
+
+bucket_name = "univ_notification"
+pickle_name = "before_notification.pickle"
 
 def notice_message(token, channel, text, attachments):
     attachments = json.dumps(attachments)
@@ -19,6 +22,7 @@ def notice_message(token, channel, text, attachments):
 
 
 if __name__=="__main__":
+    
     json_file = json.load(open('./configuration.json', 'r'))
     target_link = json_file['object_1']['target_link']
     target_name = json_file['object_1']['target_name']
@@ -27,17 +31,22 @@ if __name__=="__main__":
     slack_text= target_name+"의 "+attach_list[0]['date']+" 새 공지입니다."
     
     
-    if 'before_notice.pickle' not in os.listdir("./"):
-        pickle.dump(attach_list, open('before_notice.pickle', 'wb'))
-        notice_message(Token, channel, slack_text, attach_list)
-        before_notice = attach_list
-    else:
-        before_notice = pickle.load(open('before_notice.pickle', 'rb'))
+    # cloud storage 내 저장 파일 명시
+    storage_client = storage.Client()
+    bucket = storage_client.get_bucket(bucket_name)
+    blob = bucket.blob(pickle_name)
+    blob.download_to_filename(pickle_name)
+    
+    before_notice = pickle.load(open(pickle_name, 'rb'))
+    
+    print(before_notice)
+    
     
     if (attach_list[0]['title']==before_notice[0]['title'] and attach_list[0]['date'] == before_notice[0]['date']):
         print("nothing to notice, before: {}, {}".format(attach_list[0]['title'], attach_list[0]['date']))
     else:
-        pickle.dump(attach_list, open('before_notice.pickle', 'wb'))
+        pickle.dump(attach_list, open('before_notification.pickle', 'wb'))
         notice_message(Token, channel, slack_text, attach_list)
+        blob.upload_from_filename(pickle_name)
     
     
